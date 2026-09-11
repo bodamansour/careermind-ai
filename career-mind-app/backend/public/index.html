@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CareerMind — Readiness Scan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="scanline"></div>
+  <div id="toastContainer" class="toast-container"></div>
+
+  <header>
+    <div class="wordmark">CAREERMIND</div>
+    <div class="tagline">Multi-agent readiness scan for your next role.</div>
+  </header>
+
+  <!-- STAGE RAIL -->
+  <nav class="stage-rail" id="stageRail">
+    <div class="stage active" data-stage="0"><span class="stage-num">01</span><span class="stage-name">Intake</span></div>
+    <div class="stage" data-stage="1"><span class="stage-num">02</span><span class="stage-name">Readout</span></div>
+    <div class="stage" data-stage="2"><span class="stage-num">03</span><span class="stage-name">Plan</span></div>
+    <div class="stage" data-stage="3"><span class="stage-num">04</span><span class="stage-name">Interview</span></div>
+    <div class="stage" data-stage="4"><span class="stage-num">05</span><span class="stage-name">Jobs</span></div>
+  </nav>
+
+  <main id="app">
+
+    <!-- STEP 0: Upload -->
+    <section id="upload-section" class="panel">
+      <h2><span class="idx">01</span> Feed the scanner</h2>
+      <p class="hint">Upload your CV and paste the job you're targeting. Two agents will read them in parallel.</p>
+
+      <label>CV — PDF</label>
+      <div class="file-drop" id="fileDrop">
+        <input type="file" id="cvFile" accept="application/pdf" />
+        <span id="fileLabel" class="file-drop-text">Drop a PDF here, or click to browse</span>
+      </div>
+
+      <label>Job description</label>
+      <textarea id="jdText" rows="8" placeholder="Paste the full job description here..."></textarea>
+
+      <button id="analyzeBtn" class="btn-primary">Run analysis</button>
+      <p id="uploadError" class="error"></p>
+    </section>
+
+    <!-- LOADING -->
+    <section id="loading-section" class="panel hidden">
+      <div class="scan-bar"><div class="scan-fill"></div></div>
+      <p id="loadingText" class="mono">Reading CV...</p>
+    </section>
+
+    <!-- STEP 1: Readout -->
+    <section id="dashboard-section" class="panel hidden">
+      <h2><span class="idx">02</span> Readiness readout</h2>
+
+      <div class="readout-grid">
+        <div class="gauge">
+          <svg viewBox="0 0 120 120" class="gauge-svg">
+            <circle cx="60" cy="60" r="52" class="gauge-track" />
+            <circle cx="60" cy="60" r="52" class="gauge-fill" id="gaugeFill" />
+          </svg>
+          <div class="gauge-label">
+            <span id="readinessValue" class="mono">0%</span>
+            <span class="gauge-sub">ready</span>
+          </div>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric-row">
+            <span>Job match</span>
+            <span id="jobMatchScore" class="mono">—</span>
+          </div>
+          <div class="metric-row">
+            <span>Interview score</span>
+            <span id="interviewScoreValue" class="mono">not taken</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="skill-columns">
+        <div class="skill-col match">
+          <h3>Matching</h3>
+          <ul id="matchingSkillsList"></ul>
+        </div>
+        <div class="skill-col gap">
+          <h3>Gaps</h3>
+          <ul id="missingSkillsList"></ul>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="viewPlanBtn" class="btn-secondary">Open career plan →</button>
+        <button id="startInterviewBtn" class="btn-secondary">Start mock interview →</button>
+        <button id="viewJobsBtn" class="btn-secondary">Find open roles →</button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Plan -->
+    <section id="plan-section" class="panel hidden">
+      <button class="back-btn" data-back="dashboard">← Readout</button>
+      <h2><span class="idx">03</span> Development plan</h2>
+      <div id="planWeeks"></div>
+    </section>
+
+    <!-- STEP 3: Interview -->
+    <section id="interview-section" class="panel hidden">
+      <button class="back-btn" data-back="dashboard">← Readout</button>
+      <h2><span class="idx">04</span> Mock interview</h2>
+      <div id="chatWindow" class="chat-window">
+        <div id="typingIndicator" class="msg agent typing hidden">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div id="interviewFinal" class="hidden">
+        <h3>Result</h3>
+        <div id="finalScores"></div>
+      </div>
+
+      <div id="chatInputRow" class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Type your answer..." />
+        <button id="sendAnswerBtn" class="btn-primary">Send</button>
+      </div>
+    </section>
+
+    <!-- STEP 4: Jobs -->
+    <section id="jobs-section" class="panel hidden">
+      <button class="back-btn" data-back="dashboard">← Readout</button>
+      <h2><span class="idx">05</span> Open roles</h2>
+      <p class="hint">Pulled from Adzuna's public job index, matched to your top skills. LinkedIn does not offer a public jobs API, so results here come from a source that legitimately provides one — including some LinkedIn-sourced postings.</p>
+
+      <div class="job-search-row">
+        <input type="text" id="jobQuery" placeholder="e.g. AI Automation Engineer" />
+        <button id="searchJobsBtn" class="btn-primary">Search</button>
+      </div>
+
+      <div id="jobsList" class="jobs-list"></div>
+      <p id="jobsError" class="error"></p>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
